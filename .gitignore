@@ -130,3 +130,4 @@ dmypy.json
 
 # ini file for secrets
 .ini
+*.ini
