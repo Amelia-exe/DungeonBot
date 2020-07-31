@@ -6,14 +6,14 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from ..helpers import fuzzle as fuzzle
+from ..helpers import fuzzle
 
 MAINTAINER = "Dan6erbond#2259"
 
 
 class HelpCommand(commands.HelpCommand):
 
-    def __init__(self, embed_color: discord.Colour = discord.Colour(0).from_rgb(64, 153, 130), **options):
+    def __init__(self, embed_color: discord.Colour = discord.Colour.teal(), **options):
         self._embed_color = embed_color
         super().__init__(**options)
 
@@ -57,7 +57,7 @@ class HelpCommand(commands.HelpCommand):
                 embeds.append(embed)
 
         for index, embed in enumerate(embeds, start=1):
-            embed.set_footer(text=f"Page {index} of {len(embeds)}", icon_url=self.context.bot.user.avatar_url)
+            embed.set_footer(text=f"DungeonBot by Amelia | Page {index} of {len(embeds)}", icon_url=self.context.bot.user.avatar_url)
 
         if not embeds:
             return

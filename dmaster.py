@@ -1,69 +1,70 @@
 import os
-import asyncio
 import discord
-import configparser
+import asyncio
+from discord import Embed
+from discord import Colour
 from discord.ext import commands
+from dotenv import load_dotenv
 
-from utils import EmbedColor
-from cmds import HelpCommand
+from files.cmds.help_command import HelpCommand
 
-# Enables getting the prefix, client_id and bot token from file
-config = configparser.ConfigParser()
-config.read("config.ini")
-pfx = config["TDM"]["prefix"]
+load_dotenv()
+PFX = os.getenv('PREFIX')
 
 
-class DungeonMaster(commands.Bot):
+class Dmaster(commands.Bot):
     def __init__(self, **options):
-        super().__init__(
-            pfx, help_command=HelpCommand(),
-            description="The only DungeonMaster you'll ever need.", **options)
+        super().__init__(PFX, case_insensitive=True, help_command=HelpCommand(),
+        description="The only DungeonMaster you'll ever need.", **options)
 
     @property
     def embed(self):
-        embed = discord.Embed(colour=discord.Colour.red())
-        embed.set_footer(text=f"DungeonBot by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
+        embed = Embed(colour=Colour.red())
+        embed.set_footer(text=f"DungeonBot by Amelia.exe", icon_url=self.user.avatar_url)
         return embed
 
-    async def on_ready(self):
-        print(f"Username: {self.user} |\u2003ID: {self.user.id}, has completed connecting to Discord.")
-
     # Command removal line, can be used in any Cog to remove commands used.
-    async def slim_delete(self, ctx: commands.Context):
+    @staticmethod
+    async def auto_delete(ctx: commands.Context):
         if not getattr(ctx.message.flags, "command_removal", False):
-            await ctx.message.delete(delay=1.8)
+            await ctx.message.delete(delay=2.0)
 
-    # Generic error handler, for when a specific handler is not present to catch errors.
-    # Removes commands entered and throws/catches errors. Else, prints to console.
     async def on_command_error(self, ctx: commands.Context, error):
         # Ignore these errors
         ignored = (commands.CommandNotFound, commands.UserInputError)
         if isinstance(error, ignored):
-            await self.slim_delete(ctx)
-            await ctx.send(f'**{pfx}{ctx.message}** is not a valid input. Please check the command usage and try again. <@{ctx.message.author.id}>', delete_after=30)
+            await self.auto_delete(ctx)
+            await ctx.send(f'**{PFX}help**  for more information on commands available and how to use them. <@{ctx.message.author.id}>', delete_after=30)
+            return
         elif isinstance(error, commands.CheckFailure):
-            await self.slim_delete(ctx)
-            await ctx.send(f'You do not have access to: **{pfx}{ctx.message}**. If you believe this to be wrong, contact an administrator.', delete_after=30)
+            await self.auto_delete(ctx)
+            await ctx.send(f'You do not have access to: **{PFX}{ctx.message}**. If you believe this to be wrong, contact an administrator.', delete_after=30)
             return
         raise error
 
 
-bot = DungeonMaster()
+bot = Dmaster()
 
-# Connects the Extensions to the dmaster bot, allowing commands to be used.
+# Allows the user to know the bot has loaded successfully.
+@bot.event
+async def on_ready():
+    print(f"User: {bot.user} | ID: {bot.user.id}, has completed connecting to Discord.")
+
+
+# Connects the Addons to the index bot page, allowing commands to be used.
 for filename in os.listdir('./cog'):
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
             continue
         bot.load_extension(f'cog.{filename[:-3]}')
-        print(f'Extension: {filename[:-3]} has been initalised.')
+        print(f'Extension: {filename[:-3]} has been initialised.')
 
 async def run():
-    await bot.start(config["TDM"]["client_token"])
+    await bot.start(str(os.getenv('TOKEN')))
 
 async def logout():
-    print("DungeonMaster#2826 | ID: 718635388109062205, has been shut down.")
+    print(f"User: {bot.user} | ID: {bot.user.id}, has been shut down.")
     await bot.logout()
 
 loop = asyncio.get_event_loop()
