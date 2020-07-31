@@ -26,16 +26,18 @@ class EmbedColor(Enum):
         return operator.index(self.value.value)
 
 
+# TODO: Make use of embed template in bot
 class EmbedBuilder:
 
     ICON_URL = "https://i.imgur.com/IdEAN1j.jpg"
 
     # TODO: Finish mypy typing
+    # TODO: Use timestamp
     @classmethod
     def make_embed(cls, title: str, desc: str, author=None, fields=None, footer=None,
                    url=None, timestamp=None, empty_field=False):
         # TODO: Fix `NoneType` check
-        embed = discord.Embed(
+        embed = Embed(
             title=title,
             description=desc,
             color=random.choice([c for c in EmbedColor]).value,
