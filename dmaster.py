@@ -44,7 +44,7 @@ for filename in os.listdir('./cog'):
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
-            continue
+            continue #test
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
 
