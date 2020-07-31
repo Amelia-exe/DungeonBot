@@ -5,7 +5,6 @@ from enum import Enum
 
 from discord import Color, Embed
 
-
 # TODO: Make use of embed template in bot
 class EmbedBuilder:
 

@@ -57,7 +57,7 @@ class HelpCommand(commands.HelpCommand):
                 embeds.append(embed)
 
         for index, embed in enumerate(embeds, start=1):
-            embed.set_footer(text=f"DungeonBot by Amelia.exe | Page {index} of {len(embeds)}", icon_url=self.context.bot.user.avatar_url)
+            embed.set_footer(text=f"DungeonBot by Amelia | Page {index} of {len(embeds)}", icon_url=self.context.bot.user.avatar_url)
 
         if not embeds:
             return
