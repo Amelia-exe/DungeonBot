@@ -37,7 +37,7 @@ class EmbedBuilder:
     def make_embed(cls, title: str, desc: str, author=None, fields=None, footer=None,
                    url=None, timestamp=None, empty_field=False):
         # TODO: Fix `NoneType` check
-        embed = discord.Embed(
+        embed = Embed(
             title=title,
             description=desc,
             color=random.choice([c for c in EmbedColor]).value,
