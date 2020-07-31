@@ -1,16 +1,36 @@
-import discord, os
-from discord.ext import commands
 import configparser
+import os
+
+import discord
+
+from cmds import HelpCommand
 
 # Enables getting the prefix, client_id and bot token from file
-config= configparser.ConfigParser()
+config = configparser.ConfigParser()
 config.read("config.ini")
-pfx= config["TDM"]["prefix"]
+pfx = config["TDM"]["prefix"]
+
 
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
-        super().__init__(pfx,
-            description="The only DungeonMaster you'll ever need.", **options)
+        super().__init__(
+            pfx,
+            help_command=HelpCommand(),
+            description="The only DungeonMaster you'll ever need.",
+            **options)
+
+    @property
+    def embed(self):
+        embed = discord.Embed(
+            colour=discord.Colour(0).from_rgb(255, 85, 85)
+        )
+        embed.set_footer(text=f"Melon v{VERSION} by {MAINTAINER}", icon_url=self.user.avatar_url)
+        embed.timestamp = datetime.utcnow()
+
+        return embed
+
+    async def on_ready(self):
+        print(f'{self.user} has completed connecting to Discord.')
 
     # Command removal line, can be used in any Cog to remove commands used.
     async def slim_delete(self, ctx: commands.Context):
@@ -20,7 +40,7 @@ class DungeonMaster(commands.Bot):
     # Generic error handler, for when a specific handler is not present to catch errors.
     # Removes commands entered and throws/catches errors. Else, prints to console.
     async def on_command_error(self, ctx: commands.Context, error):
-        #Ignore these errors
+        # Ignore these errors
         ignored = (commands.CommandNotFound, commands.UserInputError)
         if isinstance(error, ignored):
             await self.slim_delete(ctx)
@@ -31,19 +51,16 @@ class DungeonMaster(commands.Bot):
             return
         raise error
 
-bot = DungeonMaster()
-
-@bot.event
-async def on_ready():
-    print(f'{bot.user} has completed connecting to Discord.')
 
 # Connects the Extensions to the dmaster bot, allowing commands to be used.
 for filename in os.listdir('./cog'):
+    bot = DungeonMaster()
+
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
-            continue #test
+            continue
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
 
-bot.run(config["TDM"]["client_token"])
+    bot.run(config["TDM"]["client_token"])
