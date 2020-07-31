@@ -49,11 +49,11 @@ class HelpCommand(commands.HelpCommand):
 
             if not cog:
                 embed.set_author(name=f"General Commands")
-                embed.description = "Use `!help [command]` for more information."
+                embed.description = f"Use `{self.context.bot.command_prefix}help [command]` for more information."
                 embeds = [embed, *embeds]
             else:
                 embed.set_author(name=f"Commands in the {cog.qualified_name} Category")
-                embed.description = "Use `!help [cog]` for more information."
+                embed.description = f"Use `{self.context.bot.command_prefix}help [cog]` for more information."
                 embeds.append(embed)
 
         for index, embed in enumerate(embeds, start=1):
@@ -99,7 +99,7 @@ class HelpCommand(commands.HelpCommand):
     async def send_cog_help(self, cog: commands.Cog):
         embed = self.embed
         embed.set_author(name=f"Commands in the {cog.qualified_name} Category")
-        embed.description = "Use `!help [command]` for more information."
+        embed.description = f"Use `{self.context.bot.command_prefix}help [command]` for more information."
 
         for cmd in cog.get_commands():
             embed.add_field(name=f"`{self.get_cmd_string(cmd)}`",

@@ -1,9 +1,10 @@
 import configparser
 import os
-from datetime import datetime
 
 import discord
 from discord.ext import commands
+
+from .utils import EmbedColor
 
 from cmds import HelpCommand
 
@@ -24,10 +25,9 @@ class DungeonMaster(commands.Bot):
     @property
     def embed(self):
         embed = discord.Embed(
-            colour=discord.Colour(0).from_rgb(255, 85, 85)
+            colour=discord.Colour(EmbedColor.RED)
         )
-        embed.set_footer(text=f"DungeonBot v1 by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
-        embed.timestamp = datetime.utcnow()
+        embed.set_footer(text=f"DungeonBot by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
 
         return embed
 
