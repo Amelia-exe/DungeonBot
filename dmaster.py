@@ -9,10 +9,8 @@ pfx= config["TDM"]["prefix"]
 
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
-        super().__init__(
-            pfx,
-            description="The only DungeonMaster you'll ever need.",
-            **options)
+        super().__init__(pfx,
+            description="The only DungeonMaster you'll ever need.", **options)
 
     # Command removal line, can be used in any Cog to remove commands used.
     async def slim_delete(self, ctx: commands.Context):
