@@ -1,11 +1,9 @@
-import configparser
 import os
-
 import discord
+import configparser
 from discord.ext import commands
 
 from .utils import EmbedColor
-
 from cmds import HelpCommand
 
 # Enables getting the prefix, client_id and bot token from file
@@ -17,18 +15,13 @@ pfx = config["TDM"]["prefix"]
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
         super().__init__(
-            pfx,
-            help_command=HelpCommand(),
-            description="The only DungeonMaster you'll ever need.",
-            **options)
+            pfx, help_command=HelpCommand(),
+            description="The only DungeonMaster you'll ever need.", **options)
 
     @property
     def embed(self):
-        embed = discord.Embed(
-            colour=discord.Colour(EmbedColor.RED)
-        )
+        embed = discord.Embed(colour=discord.Colour(EmbedColor.RED))
         embed.set_footer(text=f"DungeonBot by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
-
         return embed
 
     async def on_ready(self):
@@ -57,7 +50,6 @@ class DungeonMaster(commands.Bot):
 # Connects the Extensions to the dmaster bot, allowing commands to be used.
 for filename in os.listdir('./cog'):
     bot = DungeonMaster()
-
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
