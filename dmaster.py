@@ -1,6 +1,5 @@
 import discord, os
 from discord.ext import commands
-
 import configparser
 
 # Enables getting the prefix, client_id and bot token from file
@@ -45,9 +44,6 @@ for filename in os.listdir('./cog'):
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
-            continue
-        if filename.startswith('helpcmd'):
-            print('helpcmd is being loaded (not a cog)')
             continue
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
