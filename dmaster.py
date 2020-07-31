@@ -20,7 +20,7 @@ class Dmaster(commands.Bot):
     @property
     def embed(self):
         embed = Embed(colour=Colour.red())
-        embed.set_footer(text=f"DungeonBot by Amelia.exe", icon_url=self.user.avatar_url)
+        embed.set_footer(text=f"DungeonBot by Amelia", icon_url=self.user.avatar_url)
         return embed
 
     # Command removal line, can be used in any Cog to remove commands used.
