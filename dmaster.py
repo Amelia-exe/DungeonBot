@@ -10,10 +10,8 @@ pfx= config["TDM"]["prefix"]
 
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
-        super().__init__(
-            pfx,
-            description="The only DungeonMaster you'll ever need.",
-            **options)
+        super().__init__(pfx,
+            description="The only DungeonMaster you'll ever need.", **options)
 
     # Command removal line, can be used in any Cog to remove commands used.
     async def slim_delete(self, ctx: commands.Context):
@@ -45,10 +43,7 @@ for filename in os.listdir('./cog'):
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
-            continue
-        if filename.startswith('helpcmd'):
-            print('helpcmd is being loaded (not a cog)')
-            continue
+            continue #test
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
 
