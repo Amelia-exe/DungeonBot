@@ -16,7 +16,6 @@ async def run():
     try:
         await bot.start(config["TDM"]["client_token"])
     except KeyboardInterrupt:
-        print("Bot has stopped gracefully.")
         await bot.logout()
         
 
