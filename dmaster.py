@@ -13,7 +13,6 @@ config.read("config.ini")
 pfx = config["TDM"]["prefix"]
 
 async def run():
-    bot = DungeonMaster()
     try:
         await bot.start(config["TDM"]["client_token"])
     except KeyboardInterrupt:
@@ -54,6 +53,8 @@ class DungeonMaster(commands.Bot):
             await ctx.send(f'You do not have access to: **{pfx}{ctx.message}**. If you believe this to be wrong, contact an administrator.', delete_after=30)
             return
         raise error
+
+bot = DungeonMaster()
 
 
 # Connects the Extensions to the dmaster bot, allowing commands to be used.
