@@ -6,7 +6,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-import helpers.fuzzle as fuzzle
+from ..helpers import fuzzle as fuzzle
 
 MAINTAINER = "Dan6erbond#2259"
 

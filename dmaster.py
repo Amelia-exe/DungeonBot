@@ -21,7 +21,7 @@ class DungeonMaster(commands.Bot):
 
     @property
     def embed(self):
-        embed = discord.Embed(colour=discord.Colour(EmbedColor.RED))
+        embed = discord.Embed(colour=discord.Colour.red())
         embed.set_footer(text=f"DungeonBot by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
         return embed
 
