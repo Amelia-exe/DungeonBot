@@ -12,12 +12,6 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 pfx = config["TDM"]["prefix"]
 
-async def run():
-    try:
-        await bot.start(config["TDM"]["client_token"])
-    except KeyboardInterrupt:
-        await bot.logout()
-        
 
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
@@ -53,8 +47,8 @@ class DungeonMaster(commands.Bot):
             return
         raise error
 
-bot = DungeonMaster()
 
+bot = DungeonMaster()
 
 # Connects the Extensions to the dmaster bot, allowing commands to be used.
 for filename in os.listdir('./cog'):
@@ -65,5 +59,17 @@ for filename in os.listdir('./cog'):
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
 
+async def run():
+    await bot.start(config["TDM"]["client_token"])
+
+async def logout():
+    print("DungeonMaster#2826 | ID: 718635388109062205, has been shut down.")
+    await bot.logout()
+
 loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
+try:
+    loop.run_until_complete(run())
+except KeyboardInterrupt:
+    loop.run_until_complete(logout())
+finally:
+    loop.close()
