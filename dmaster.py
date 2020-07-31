@@ -1,5 +1,6 @@
 import configparser
 import os
+from datetime import datetime
 
 import discord
 from discord.ext import commands
@@ -25,7 +26,7 @@ class DungeonMaster(commands.Bot):
         embed = discord.Embed(
             colour=discord.Colour(0).from_rgb(255, 85, 85)
         )
-        embed.set_footer(text=f"Melon v{VERSION} by {MAINTAINER}", icon_url=self.user.avatar_url)
+        embed.set_footer(text=f"DungeonBot v1 by ┐(´ー｀)┌#9268", icon_url=self.user.avatar_url)
         embed.timestamp = datetime.utcnow()
 
         return embed
