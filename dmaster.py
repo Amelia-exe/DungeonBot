@@ -1,9 +1,10 @@
 import os
+import asyncio
 import discord
 import configparser
 from discord.ext import commands
 
-from .utils import EmbedColor
+from utils import EmbedColor
 from cmds import HelpCommand
 
 # Enables getting the prefix, client_id and bot token from file
@@ -11,6 +12,14 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 pfx = config["TDM"]["prefix"]
 
+async def run():
+    bot = DungeonMaster()
+    try:
+        await bot.start(config["TDM"]["client_token"])
+    except KeyboardInterrupt:
+        print("Bot has stopped gracefully.")
+        await bot.logout()
+        
 
 class DungeonMaster(commands.Bot):
     def __init__(self, **options):
@@ -25,7 +34,7 @@ class DungeonMaster(commands.Bot):
         return embed
 
     async def on_ready(self):
-        print(f'{self.user} has completed connecting to Discord.')
+        print(f"Username: {self.user} |\u2003ID: {self.user.id}, has completed connecting to Discord.")
 
     # Command removal line, can be used in any Cog to remove commands used.
     async def slim_delete(self, ctx: commands.Context):
@@ -49,7 +58,6 @@ class DungeonMaster(commands.Bot):
 
 # Connects the Extensions to the dmaster bot, allowing commands to be used.
 for filename in os.listdir('./cog'):
-    bot = DungeonMaster()
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
@@ -57,4 +65,5 @@ for filename in os.listdir('./cog'):
         bot.load_extension(f'cog.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initalised.')
 
-    bot.run(config["TDM"]["client_token"])
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run())
