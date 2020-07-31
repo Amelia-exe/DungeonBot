@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from inspect import Parameter
 from typing import List, Mapping, Optional
 
@@ -28,7 +27,6 @@ class HelpCommand(commands.HelpCommand):
             embed.set_footer(
                 text=f"Help command by {MAINTAINER}",
                 icon_url=self.context.bot.user.avatar_url)
-            embed.timestamp = datetime.utcnow()
 
             return embed
 
