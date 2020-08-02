@@ -6,11 +6,10 @@ from discord import Colour
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from files.cmds.help_command import HelpCommand
+from assets.cmds.help_command import HelpCommand
 
 load_dotenv()
 PFX = os.getenv('PREFIX')
-
 
 class Dmaster(commands.Bot):
     def __init__(self, **options):
@@ -42,7 +41,6 @@ class Dmaster(commands.Bot):
             return
         raise error
 
-
 bot = Dmaster()
 
 # Allows the user to know the bot has loaded successfully.
@@ -50,14 +48,13 @@ bot = Dmaster()
 async def on_ready():
     print(f"User: {bot.user} | ID: {bot.user.id}, has completed connecting to Discord.")
 
-
 # Connects the Addons to the index bot page, allowing commands to be used.
-for filename in os.listdir('./cog'):
+for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         if filename.startswith('__init__'):
             print("__init__ was ignored.")
             continue
-        bot.load_extension(f'cog.{filename[:-3]}')
+        bot.load_extension(f'cogs.{filename[:-3]}')
         print(f'Extension: {filename[:-3]} has been initialised.')
 
 async def run():

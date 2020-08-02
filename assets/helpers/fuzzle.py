@@ -5,9 +5,7 @@ def get_parts(s):
             part = s[i:i + size]
             if part not in parts:
                 parts.append(part)
-
     parts.sort(key=lambda s: len(s), reverse=True)
-
     return parts
 
 
@@ -15,18 +13,14 @@ def find(options, search, return_all=False, coverage_multiplier=0.02975):
     search = search.lower().strip()
 
     words = search.split(" ")
-
     max_coverage = 1 - len(search) * coverage_multiplier
-
     results = list()
-
     for option in options:
         if isinstance(option, str):
             option = {"key": option}
-
+        
         key = option["key"].lower().strip()
         tags = option["tags"] if "tags" in option else list()
-
         construct = ""
         last = -1
         for size in range(len(search), 0, -1):  # reverse loop through the possible lengths
@@ -38,7 +32,6 @@ def find(options, search, return_all=False, coverage_multiplier=0.02975):
                         last = key.index(part) + size - 1
 
         coverage = len(construct) / len(search)
-
         match = 1 if key == search else 0
         word_matches = set()
         tag_match = False
@@ -72,7 +65,6 @@ def find(options, search, return_all=False, coverage_multiplier=0.02975):
             continue
 
         typo_tolerance = len(key) / 5
-
         cat = 7
         if match == 1:
             cat = 0
@@ -105,5 +97,4 @@ def find(options, search, return_all=False, coverage_multiplier=0.02975):
 
     results.sort(key=lambda i: i["accuracy"], reverse=True)
     results.sort(key=lambda i: i["cat"])
-
     return results
