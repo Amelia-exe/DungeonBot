@@ -6,7 +6,8 @@ from discord import Colour
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from assets.cmds.help_command import HelpCommand
+from cmds.help_command import HelpCommand
+from helpers import fuzzle as fuzzle
 
 load_dotenv()
 PFX = os.getenv('PREFIX')
@@ -14,12 +15,13 @@ PFX = os.getenv('PREFIX')
 class Dmaster(commands.Bot):
     def __init__(self, **options):
         super().__init__(PFX, case_insensitive=True, help_command=HelpCommand(),
-        description="The only DungeonMaster you'll ever need.", **options)
+                         description="The only DungeonMaster you'll ever need.", **options)
 
     @property
     def embed(self):
         embed = Embed(colour=Colour.red())
-        embed.set_footer(text=f"DungeonBot by Amelia", icon_url=self.user.avatar_url)
+        embed.set_footer(text=f"DungeonBot by Amelia",
+                         icon_url=self.user.avatar_url)
         return embed
 
     # Command removal line, can be used in any Cog to remove commands used.
@@ -33,21 +35,29 @@ class Dmaster(commands.Bot):
         ignored = (commands.CommandNotFound, commands.UserInputError)
         if isinstance(error, ignored):
             await self.auto_delete(ctx)
-            await ctx.send(f'**{PFX}help**  for more information on commands available and how to use them. <@{ctx.message.author.id}>', delete_after=30)
+            cmds = [{"key": cmd.name, "tags": cmd.aliases, "cmd": cmd} for cmd in ctx.bot.commands]
+            results = fuzzle.find(cmds, ctx.message.content, 0.02)
+            if results:
+                top_cmds = '\n'.join([f"`{self.get_cmd_string(cmd['cmd'])}`" for cmd in results][:3])
+                await ctx.send(f"No command called \"{ctx.message.content}\" found. " +
+                                                f"Maybe you meant?\n\n{top_cmds}\n\n" +
+                                                "Powered by Fuzzle™.")
+            else:
+                await ctx.send(f"No command called \"{ctx.message.content}\" found. Please try a different search.")
             return
         elif isinstance(error, commands.CheckFailure):
             await self.auto_delete(ctx)
-            await ctx.send(f'You do not have access to: **{PFX}{ctx.message}**. If you believe this to be wrong, contact an administrator.', delete_after=30)
+            await ctx.send(f'You do not have access to: **{PFX}{ctx.message}**." \
+                "If you believe this to be wrong, contact an administrator.', delete_after=30)
             return
         raise error
 
+    # Allows the user to know the bot has loaded successfully.
+    async def on_ready(self):
+        print(
+            f"User: {self.user} | ID: {self.user.id}, has completed connecting to Discord.")
+
 bot = Dmaster()
-
-# Allows the user to know the bot has loaded successfully.
-@bot.event
-async def on_ready():
-    print(f"User: {bot.user} | ID: {bot.user.id}, has completed connecting to Discord.")
-
 # Connects the Addons to the index bot page, allowing commands to be used.
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
@@ -68,6 +78,6 @@ loop = asyncio.get_event_loop()
 try:
     loop.run_until_complete(run())
 except KeyboardInterrupt:
-    loop.run_until_complete(logout())
+    loop.close()
 finally:
     loop.close()
