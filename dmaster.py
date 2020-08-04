@@ -58,7 +58,6 @@ class Dmaster(commands.Bot):
             f"User: {self.user} | ID: {self.user.id}, has completed connecting to Discord.")
 
 bot = Dmaster()
-
 # Connects the Addons to the index bot page, allowing commands to be used.
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
