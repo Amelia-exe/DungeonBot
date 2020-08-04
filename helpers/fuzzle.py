@@ -11,7 +11,6 @@ def get_parts(s):
 
 def find(options, search, return_all=False, coverage_multiplier=0.02975):
     search = search.lower().strip()
-
     words = search.split(" ")
     max_coverage = 1 - len(search) * coverage_multiplier
     results = list()

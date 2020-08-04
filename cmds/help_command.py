@@ -4,7 +4,7 @@ from inspect import Parameter
 from discord.ext import commands
 from typing import List, Mapping, Optional
 
-from ..helpers import fuzzle
+from helpers import fuzzle as fuzzle
 
 MAINTAINER = "Dan6erbond#2259"
 
@@ -22,7 +22,9 @@ class HelpCommand(commands.HelpCommand):
             return self.context.bot.get_embed()
         else:
             embed = discord.Embed(colour=self._embed_color)
-            embed.set_footer(text=f"Help command by {MAINTAINER}", icon_url=self.context.bot.user.avatar_url)
+            embed.set_footer(
+                text=f"Help command by {MAINTAINER}",
+                icon_url=self.context.bot.user.avatar_url)
             return embed
 
     def get_cmd_string(self, cmd: commands.Command):
@@ -61,10 +63,8 @@ class HelpCommand(commands.HelpCommand):
         while seconds < MAX_TIME:
             try:
                 time_started = datetime.now()
-                reaction = await self.context.bot.wait_for("reaction_add",
-                    check=lambda r, u: u.id == self.context.author.id and r.message.id == msg.id,
-                    timeout=MAX_TIME - seconds
-                )
+                reaction = await self.context.bot.wait_for("reaction_add", timeout=MAX_TIME - seconds,
+                                                           check=lambda r, u: u.id == self.context.author.id and r.message.id == msg.id)
                 await msg.remove_reaction(reaction[0], reaction[1])
 
                 if reaction[0].emoji == "⏮":
@@ -86,28 +86,53 @@ class HelpCommand(commands.HelpCommand):
         embed.set_author(name=f"Commands in the {cog.qualified_name} Category")
         embed.description = f"Use `{self.context.bot.command_prefix}help [command]` for more information."
         for cmd in cog.get_commands():
-            embed.add_field(name=f"`{self.get_cmd_string(cmd)}`", value=cmd.brief if cmd.brief else cmd.help, inline=False)
+            embed.add_field(name=f"`{self.get_cmd_string(cmd)}`",
+                            value=cmd.brief if cmd.brief else cmd.help,
+                            inline=False)
         await self.get_destination().send(embed=embed)
 
+    # Called when the user requests a group help
     async def send_group_help(self, group):
-        print("Group help:", group)
         return await super().send_group_help(group)
 
+    # called when the user requests a command help
     async def send_command_help(self, command: commands.Command):
         embed = self.embed
-        embed.add_field(name=f"`{self.get_cmd_string(command)}`", value=command.help if command.help else command.brief, inline=False)
+        embed.set_author(name=command.name)
+        embed.description = command.help or command.brief
         await self.get_destination().send(embed=embed)
 
+    # called when a command wasn't found
     async def command_not_found(self, string):
-        cmds = [{"key": cmd.name, "tags": cmd.aliases, "cmd": cmd} for cmd in self.context.bot.commands]
-        results = fuzzle.find(cmds, string, 0.02)
+        for name, cog in self.context.bot.cogs.items():
+            if type(cog).__name__ == string:
+                return await self.send_cog_help(cog)
+
+        cmds = [{"key": cmd.name, "tags": cmd.aliases, "cmd": cmd}
+                for cmd in self.context.bot.commands]
+
+        embed = self.embed
+        embed.set_author(name=f"No command called \"{string}\" found.")
+
+        results = fuzzle.find(cmds, string, 0.02)[:3]
         if results:
-            top_cmds = '\n'.join([f"`{self.get_cmd_string(cmd['cmd'])}`" for cmd in results][:3])
-            await self.get_destination().send(f"No command called \"{string}\" found. " +
-                                              f"Maybe you meant?\n\n{top_cmds}\n\n" +
-                                              "Powered by Fuzzle™.")
+            for i, cmd in enumerate(results):
+                value = f"\u2000{cmd['cmd'].brief or cmd['cmd'].help}"
+                if i == len(results)-1:
+                    value += "\n<:space:583964300016615445>"
+                embed.add_field(name=f"`{self.get_cmd_string(cmd['cmd'])}`",
+                                value=value,
+                                inline=False)
+            msg = "Maybe you meant?"
+            embed.add_field(
+                name="Powered By",
+                value="[Fo Shizzle Mah Fuzzle™](https://github.com/Dan6erbond/Fuzzle)",
+                inline=False)
         else:
-            await self.get_destination().send(f"No command called \"{string}\" found. Please try a different search.")
+            msg = "Please try a different search."
+        embed.description = msg
+
+        await self.get_destination().send(embed=embed)
 
     async def subcommand_not_found(self, command, string):
         print("Subcommand not found:", command, string)
